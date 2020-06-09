@@ -1,7 +1,6 @@
 # ----- CONFIGURE YOUR EDITOR TO USE 4 SPACES PER TAB ----- #
 import settings
 import sys,os
-sys.path.append(os.path.join(os.path.split(os.path.abspath(__file__))[0], 'lib'))
 import pymysql as db
 
 def connection():
@@ -30,7 +29,7 @@ def classify_review(reviewid):
     try : 
         cur.execute(sql)
         results=cur.fetchall()
-        text=results
+        textOfReview=results # pira to text tis Review
     except :
         print("error")
 
@@ -57,10 +56,65 @@ def classify_review(reviewid):
         negterm=results # pira ta negterms logika einai tupple?
     except :
         print("error")
+    # Apo sql exo parei negterm, posterm , textOfReview
 
-    print(posterm)
-    print(results)
-    return negterm
+    textOfReview=str(textOfReview[0][0])
+
+    print("\n to text tou review")
+    print(textOfReview)
+    print("\n\n\n")
+
+    ngrammata=extract_ngrams(list(textOfReview.split()),3)
+
+    print("\n ngrammata")
+    print(ngrammata)
+    print("\n\n\n")
+
+    listOfPosTerm = [a[0] for a in posterm]
+
+    print("\nlist of posterm")
+    print(listOfPosTerm)
+    print("\n\n\n")
+    kalaSxolia= []
+    for i in range(3,0,-1):
+        ngrammata=extract_ngrams(list(textOfReview.split()),i)
+        kalaSxolia.append(list(set(ngrammata).intersection(listOfPosTerm)))
+    print("\nKalaSxolia")
+    print(kalaSxolia)
+    print("\n\n\n")
+    # sostaKalaSxolia = kalaSxolia
+    # for sublista in reversed(kalaSxolia):
+    #     for itema in sublista:
+    #         for substring in itema.split():
+    #             for substring1 in itema.split():
+    #                 if substring==substring1:
+    #                     for each in kalaSxolia:
+    #                         for eachItem in each:
+    #                             if substring==eachItem:
+    #                                 kalaSxolia.each.remove(eachItem)
+
+
+  
+
+
+    print("\n Kala Sxolia")
+    print(kalaSxolia)
+    print("\n\n\n")
+
+    return textOfReview
+
+
+def extract_ngrams(wordlist, n):   
+    ngrams = []
+    sostiLista= []    
+    for i in range(len(wordlist)-(n-1)):
+        ngrams.append(wordlist[i:i+n])
+
+    for sublist in ngrams:
+        sumOfStrings=" ".join(sublist)
+        sostiLista.append(sumOfStrings)
+    return sostiLista
+
 
 
 def updatezipcode(business_id,zipcode):
