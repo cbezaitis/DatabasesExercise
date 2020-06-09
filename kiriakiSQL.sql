@@ -69,3 +69,67 @@ SELECT u.user_id , r.votes_useful
 FROM reviews r, user u , business b 
 WHERE u.user_id=r.user_id AND b.business_id=r.business_id and b.name='Midas'
 ORDER BY r.votes_useful DESC;
+
+--------------------------------------------------------------------------------------------
+-- 1 
+SELECT u.name, u.yelping_since, u.review_count
+FROM user u
+WHERE name = 'Lisa' AND u.review_count >500
+ORDER BY  u.yelping_since;
+
+
+-- 2
+SELECT r.review_id AS IF_EXISTS
+FROM reviews r
+WHERE EXISTS ( SELECT u.user_id, b.business_id
+				FROM  user u,  business b
+                WHERE u.user_id = r.user_id  AND u.name = 'Lisa' AND b.name = 'Gab & Eat' AND r.business_id = b.business_id);
+
+-- 3
+SELECT 'Yes' as Answer
+where EXISTS (
+				SELECT rpn.positive 
+				FROM business b ,reviews_pos_neg rpn , reviews r
+				WHERE b.business_id=r.business_id and  b.business_id = 'OmpbTu4deR3ByOo7btTTZw' and rpn.review_id=r.review_id and rpn.positive=1)
+UNION
+SELECT 'No' as Answer
+where not EXISTS (
+				SELECT rpn.positive 
+				FROM business b ,reviews_pos_neg rpn , reviews r
+				WHERE b.business_id=r.business_id and  b.business_id = 'OmpbTu4deR3ByOo7btTTZw' and rpn.review_id=r.review_id and rpn.positive=1 );
+-- 4
+ 
+SELECT distinct b.business_id, COUNT(rpn.positive)
+FROM  business b, reviews_pos_neg rpn, reviews r
+WHERE r.business_id = b.business_id AND r.review_id = rpn.review_id AND r.date=2014
+GROUP BY b.business_id
+HAVING COUNT(r.review_id) > 10;
+
+                                
+                                
+-- 5
+SELECT u.user_id, COUNT(r.review_id) AS Reviews
+FROM reviews r, user u , business b , business_category bc , category c
+WHERE r.business_id=b.business_id AND bc.business_id=b.business_id AND r.user_id=u.user_id AND bc.category_id=c.category_id AND c.category='Mobile Phones' 
+GROUP BY u.user_id ;
+
+
+-- 6
+SELECT  r.votes_useful, u.user_id, b.name, b.business_id
+FROM reviews r, user u , business b 
+WHERE u.user_id=r.user_id AND b.business_id=r.business_id and b.name='Midas'
+ORDER BY r.votes_useful DESC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
